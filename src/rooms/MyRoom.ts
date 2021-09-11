@@ -1,6 +1,6 @@
 import { Room, Client } from "colyseus";
 import {GameState} from "./schema/GameState";
-import { Q } from './schema/constants'
+import { Q ,QandACount} from './schema/constants'
 
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -19,8 +19,84 @@ export class MyRoom extends Room {
       this.broadcast("messages", `(${client.sessionId}) ${message}`);
     });
 
+    this.onMessage("roomcreator", (client, data) => {
+      console.log("ChatRoom received message from", client.sessionId, ":", data.value);
+      if( data.value){
+        this.state.players.get(client.sessionId).isRoomCreator=true
+      }
+      console.log('PlayerWhoCreatesRoom state in backend ', this.state.players.get(client.sessionId).isRoomCreator);
+    });
+
+    this.onMessage("ready", (client, data) => {
+      console.log("onMessage ready received message from", client.sessionId, ":", data);
+      this.state.ready = data.value;
+      this.broadcast("readychange", {value:data.value});
+      this.state.players.forEach((value, key) => {
+          value.Question = Q[0];
+          value.Questionno = 0 ;
+          value.playerState = 'inplay'
+          console.log("key =>", key)
+          console.log("value =>", value.Question)
+          console.log("value =>", value.Questionno)
+
+      });
+      console.log('ready state in backend', this.state.ready);
+    });
+
+    this.onMessage("answerforQ0", (client, data) => {
+      console.log("onMessage ready received message from", client.sessionId, ":", data);
+      var player = this.state.players.get(client.sessionId);
+      if(data?.value){
+        player.choice_of_adj_player=data.value
+      }
+      if(player.Questionno===0){
+        player.Questionno = 1 
+        player.Question = Q[1]
+        console.log('player.Question ', player.Question);
+        console.log('player.Questionno ', player.Questionno);
+    }
+    console.log("player.choice_of_adj_player",player.choice_of_adj_player);
+    });
+
+    this.onMessage("answer", (client, data) => {
+      console.log("onMessage ready received message from", client.sessionId, ":", data);
+      var player = this.state.players.get(client.sessionId);
+
+      if(data?.value){
+        data.value.forEach((element: { sessionId: string; }) => {
+          if(element.sessionId!==client.sessionId){
+            var otherplayer = this.state.players.get(element.sessionId);
+            otherplayer.choice_of_adj_otherplayers[player.Questionno-1]+=1
+            console.log('otherplayer.choice_of_adj_otherplayers',otherplayer.choice_of_adj_otherplayers);  
+          }
+        });
+      }
+    
 
 
+      if(player.Questionno>0 && player.Questionno<QandACount-1){
+
+
+        player.Questionno += 1 
+        player.Question = Q[player.Questionno]
+        console.log('player.Question ', player.Question);
+        console.log('player.Questionno ', player.Questionno);
+    }else{
+        player.Questionno = -1 
+        player.Question = ""
+        console.log('player.Question ', player.Question);
+        console.log('player.Questionno ', player.Questionno);
+    }
+    });
+
+    this.onMessage("endgame", (client, data) => {
+      console.log("onMessage ready received message from", client.sessionId, ":", data);
+      if(data.value){
+        this.state.ready = data.value;
+        // this.broadcast("readychange", {value:data.value});
+      }
+      console.log('ready state in backend', this.state.ready);
+    });
     this.setState(new GameState())
   }
 

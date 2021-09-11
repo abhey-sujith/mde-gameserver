@@ -4,6 +4,9 @@ import { Q } from './constants'
 
 export class Player extends Schema {
     
+    @type("string" )
+    Question: string;
+
     @type("number" )
     Questionno: number;
 
@@ -24,11 +27,11 @@ export class Player extends Schema {
 
     constructor(playerName: string = "" ) {
         super();
+        this.Question = '';
         this.Questionno = 0;
         this.playerName = playerName;
         this.playerState = 'idle';
         this.isRoomCreator = false;
-        this.choice_of_adj_player = new ArraySchema<boolean>(...(new Array<boolean>(QandACount).fill(false)));
-        this.choice_of_adj_otherplayers = new ArraySchema<number>(...(new Array<number>(QandACount).fill(0)));
+        this.choice_of_adj_otherplayers = new ArraySchema<number>(...(new Array<number>(QandACount-1).fill(0)));
     }
 }

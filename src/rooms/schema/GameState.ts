@@ -12,9 +12,13 @@ export class GameState extends Schema {
   @type("string")
   ready: string;
 
+  @type([ "string" ])
+  Adjectives: string[];
+
   constructor() {
     super();
     this.ready = 'pending' ;
+    this.Adjectives = new ArraySchema<string>(...Adjectives_);
   } 
   createPlayer(sessionId: string,playerName: string) {
     this.players.set(sessionId, new Player(playerName));
