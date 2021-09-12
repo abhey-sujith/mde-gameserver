@@ -5,7 +5,7 @@ import { Q ,QandACount} from './schema/constants'
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 export class MyRoom extends Room {
-  maxClients = 4;
+  maxClients = 20;
 
   async onCreate (options: any) {
     if (options.password) {
