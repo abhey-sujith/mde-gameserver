@@ -82,6 +82,7 @@ export class MyRoom extends Room {
         console.log('player.Question ', player.Question);
         console.log('player.Questionno ', player.Questionno);
     }else{
+        player.playerState="done"
         player.Questionno = -1 
         player.Question = ""
         console.log('player.Question ', player.Question);
@@ -93,7 +94,7 @@ export class MyRoom extends Room {
       console.log("onMessage ready received message from", client.sessionId, ":", data);
       if(data.value){
         this.state.ready = data.value;
-        // this.broadcast("readychange", {value:data.value});
+        this.broadcast("readychange", {value:data.value});
       }
       console.log('ready state in backend', this.state.ready);
     });
