@@ -1,0 +1,11 @@
+{
+    "name": "Colyseus Multiplayer",
+    "description": "Multiplayer Game Server",
+    "keywords": ["node", "multiplayer", "colyseus"],
+    "env": {
+      "NPM_CONFIG_PRODUCTION": {
+        "description": "Leave as 'false' to install required devDependencies.",
+        "value": "false"
+      }
+    }
+  }
