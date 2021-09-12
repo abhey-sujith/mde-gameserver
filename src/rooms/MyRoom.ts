@@ -122,6 +122,29 @@ export class MyRoom extends Room {
           }
           console.log(' in onleave');
 
+          var newclientkey;
+          if(this.state.players.get(client.sessionId).isRoomCreator){
+              console.log(' is player greater than 1');
+              if(this.state.players.size>1){
+                  console.log('Players available');
+                  
+                  for (const key of this.state.players.keys()) {
+                      if(key !==client.sessionId){
+                          newclientkey=key
+                          break;
+                      }
+                    }
+                                      
+                  this.state.players.get(newclientkey).isRoomCreator = true
+                  this.state.players.get(client.sessionId).isRoomCreator = false
+              }else{
+                console.log('Players not available');
+                
+              }
+          }
+
+
+
           await this.allowReconnection(client, 60);
           console.log("Reconnected!");
 
@@ -129,8 +152,10 @@ export class MyRoom extends Room {
           this.broadcast("messages", `${ client.sessionId } joined.`);
 
       } catch (e) {
+
+
           this.state.removePlayer(client.sessionId);
-          console.log(e);
+          // console.log(e);
       }
   }
 
