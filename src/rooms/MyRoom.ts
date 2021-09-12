@@ -31,7 +31,7 @@ export class MyRoom extends Room {
       console.log("onMessage ready received message from", client.sessionId, ":", data);
       this.state.ready = data.value;
       this.broadcast("readychange", {value:data.value});
-      this.state.players.forEach((value, key) => {
+      this.state.players.forEach((value: { Question: string; Questionno: number; playerState: string; }, key: any) => {
           value.Question = Q[0];
           value.Questionno = 0 ;
           value.playerState = 'inplay'
